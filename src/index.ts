@@ -6,6 +6,7 @@ import compression from "compression";
 import connectDB from "./db/db";
 import http from "http";
 import "dotenv/config";
+import router from "./router/router";
 
 // Variables
 const PORT = process.env.PORT || 5000;
@@ -19,17 +20,21 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
+
+// Root route
+app.get("/", (req, res) => {
+  res.send("Hello World! REST API is running.");
+});
+
+// API routes
+app.use("/", router());
 
 const server = http.createServer(app);
 
 (async () => {
   await connectDB(MONGO_URI); // wait for DB connection
-  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 })();
